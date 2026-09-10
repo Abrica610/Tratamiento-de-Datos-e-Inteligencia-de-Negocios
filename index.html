@@ -33,7 +33,7 @@
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
         }
 
-        /* Custom Scrollbar for Drawer */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -62,21 +62,32 @@
             box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.3), 0 12px 25px -5px rgba(2, 132, 199, 0.4);
         }
         .concept-node.dimmed {
-            opacity: 0.25;
+            opacity: 0.2;
             filter: grayscale(80%);
         }
 
-        /* Connecting SVG Lines Animation */
+        /* Connecting Lines & Text Overlay */
         .connector-line {
-            stroke-dasharray: 8;
-            animation: dash 30s linear infinite;
+            stroke-dasharray: 6;
+            animation: dash 35s linear infinite;
             transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
         }
         .connector-line.active-path {
             stroke: #38bdf8 !important;
-            stroke-width: 3.5px !important;
+            stroke-width: 3px !important;
             stroke-dasharray: none;
             filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+        }
+
+        .link-text {
+            font-size: 10px;
+            font-weight: 700;
+            fill: #94a3b8;
+            transition: fill 0.3s ease;
+        }
+        .active-link-text {
+            fill: #38bdf8 !important;
+            font-size: 11px;
         }
 
         @keyframes dash {
@@ -113,21 +124,19 @@
             <div>
                 <h1 class="font-heading font-extrabold text-lg text-white tracking-tight flex items-center gap-2">
                     Tratamiento de Datos e Inteligencia de Negocios
-                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">Mapa Interactivo</span>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">Con Palabras de Enlace</span>
                 </h1>
-                <p class="text-xs text-slate-400">Haz clic en los nodos para explorar conceptos, conexiones y detalles</p>
+                <p class="text-xs text-slate-400">Mapa conceptual estructurado con jerarquías, conectores explícitos e interactividad</p>
             </div>
         </div>
 
         <!-- Filter Buttons & Search -->
         <div class="flex items-center gap-3">
-            <!-- Search Input -->
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                 <input type="text" id="searchInput" placeholder="Buscar concepto..." class="w-48 focus:w-64 transition-all duration-300 bg-slate-800/90 border border-slate-700/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500">
             </div>
 
-            <!-- Filters -->
             <div class="hidden lg:flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/80 text-xs">
                 <button onclick="filterCategory('all')" class="filter-btn px-3 py-1 rounded-md text-xs font-medium bg-sky-600 text-white transition-all" data-cat="all">Todos</button>
                 <button onclick="filterCategory('captura')" class="filter-btn px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all" data-cat="captura">Captura</button>
@@ -136,7 +145,6 @@
                 <button onclick="filterCategory('gobernanza')" class="filter-btn px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all" data-cat="gobernanza">Gobernanza</button>
             </div>
 
-            <!-- Reset View Button -->
             <button onclick="resetView()" class="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 text-xs text-slate-300 font-medium transition-all flex items-center gap-1.5" title="Restablecer vista">
                 <i class="fa-solid fa-arrows-rotate"></i>
                 <span>Reset</span>
@@ -147,50 +155,38 @@
     <!-- Main Workspace Area -->
     <main class="flex-grow relative overflow-hidden bg-slate-950 bg-grid flex">
 
-        <!-- Zoom Control Bar Floating -->
+        <!-- Zoom Control Bar -->
         <div class="absolute bottom-6 left-6 z-20 flex flex-col gap-1.5 bg-slate-900/90 border border-slate-800 p-1.5 rounded-xl backdrop-blur-md shadow-xl">
-            <button onclick="zoomIn()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-sm transition-all" title="Zoom In">
+            <button onclick="zoomIn()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-sm transition-all">
                 <i class="fa-solid fa-plus"></i>
             </button>
-            <button onclick="resetZoom()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold transition-all" title="100%">
+            <button onclick="resetZoom()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold transition-all">
                 1:1
             </button>
-            <button onclick="zoomOut()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-sm transition-all" title="Zoom Out">
+            <button onclick="zoomOut()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-300 hover:text-white flex items-center justify-center text-sm transition-all">
                 <i class="fa-solid fa-minus"></i>
             </button>
         </div>
 
-        <!-- Interactive Legend -->
+        <!-- Legend -->
         <div class="absolute top-6 left-6 z-20 hidden md:flex items-center gap-4 bg-slate-900/80 border border-slate-800/80 px-4 py-2 rounded-xl backdrop-blur-md text-xs">
-            <span class="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Leyenda:</span>
-            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span><span class="text-slate-300">Entrada</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span><span class="text-slate-300">Tratamiento</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-slate-300">Análisis & Visualización</span></div>
-            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span class="text-slate-300">Gobernanza & Ética</span></div>
+            <span class="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Criterio 7 Rúbrica:</span>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span><span class="text-slate-300">Palabras de Enlace en Líneas</span></div>
         </div>
 
-        <!-- Interactive Map Canvas Workspace -->
+        <!-- Interactive Map Canvas -->
         <div id="canvasViewport" class="w-full h-full relative cursor-grab active:cursor-grabbing overflow-hidden">
-            <!-- SVG Connectors Layer -->
             <svg id="svgLayer" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-                <defs>
-                    <linearGradient id="grad-sky" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#0284c7" stop-opacity="0.6"/>
-                        <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.2"/>
-                    </linearGradient>
-                </defs>
-                <!-- Lines generated by JS -->
+                <!-- Lines & Labels generated by JS -->
             </svg>
 
-            <!-- Node Elements Container -->
             <div id="nodesContainer" class="absolute top-0 left-0 w-full h-full z-10 transition-transform duration-100 ease-out">
                 <!-- Nodes inserted dynamically by JS -->
             </div>
         </div>
 
-        <!-- Detail Drawer / Side Modal -->
+        <!-- Detail Drawer -->
         <aside id="detailDrawer" class="w-96 bg-slate-900/95 border-l border-slate-800 h-full backdrop-blur-xl z-30 transition-all duration-300 transform translate-x-full absolute right-0 top-0 flex flex-col shadow-2xl">
-            <!-- Drawer Header -->
             <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900">
                 <div class="flex items-center gap-2">
                     <span id="drawerBadge" class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">Fase 1</span>
@@ -201,239 +197,248 @@
                 </button>
             </div>
 
-            <!-- Drawer Body -->
             <div class="p-6 overflow-y-auto flex-grow space-y-6">
                 <div>
                     <h2 id="drawerTitle" class="font-heading text-2xl font-bold text-white mb-2">Título del Concepto</h2>
-                    <p id="drawerSubtitle" class="text-sm text-slate-300 leading-relaxed">Descripción concisa y general del nodo seleccionado.</p>
+                    <p id="drawerSubtitle" class="text-sm text-slate-300 leading-relaxed">Descripción del nodo.</p>
                 </div>
 
-                <!-- Content Sections -->
                 <div class="space-y-4">
-                    <!-- Key Elements / Points -->
                     <div class="bg-slate-800/50 border border-slate-700/60 rounded-xl p-4">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-sky-400 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check"></i> Componentes Clave
+                            <i class="fa-solid fa-list-check"></i> Componentes y Ejemplos
                         </h3>
-                        <ul id="drawerList" class="space-y-2 text-xs text-slate-300">
-                            <!-- Items inserted dynamically -->
-                        </ul>
+                        <ul id="drawerList" class="space-y-2 text-xs text-slate-300"></ul>
                     </div>
 
-                    <!-- Strategic Impact / Insight Box -->
                     <div class="bg-gradient-to-br from-slate-800/80 to-sky-950/30 border border-sky-500/20 rounded-xl p-4">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line"></i> Impacto Empresarial
+                            <i class="fa-solid fa-chart-line"></i> Impacto Organizacional
                         </h3>
-                        <p id="drawerImpact" class="text-xs text-slate-300 leading-relaxed">Explicación del beneficio en la toma de decisiones.</p>
+                        <p id="drawerImpact" class="text-xs text-slate-300 leading-relaxed"></p>
                     </div>
 
-                    <!-- Related Connections -->
                     <div>
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Conceptos Relacionados</h3>
-                        <div id="drawerRelated" class="flex flex-wrap gap-2">
-                            <!-- Clickable related node tags -->
-                        </div>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Proposiciones y Conexiones</h3>
+                        <div id="drawerRelated" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Drawer Footer / Actions -->
             <div class="p-4 border-t border-slate-800 bg-slate-900/80 flex items-center justify-between text-xs text-slate-400">
-                <span>Inteligencia de Negocios</span>
-                <span id="drawerNodeId" class="font-mono text-[10px]">ID: node-1</span>
+                <span>Rúbrica Blackboard CE 2.1</span>
+                <span id="drawerNodeId" class="font-mono text-[10px]">ID: root</span>
             </div>
         </aside>
     </main>
 
-    <!-- Data & Script Logic -->
     <script>
-        // Data structure for Concept Map Nodes
+        // Concept Node Data with LINK WORDS (Palabras de Enlace)
         const conceptData = [
             {
                 id: "root",
-                title: "Tratamiento de Datos e Inteligencia de Negocios",
-                subtitle: "Transformación de datos crudos en conocimiento accionable para decisiones estratégicas.",
+                title: "Tratamiento de Datos en una Organización",
+                subtitle: "Proceso que permite transformar datos en información útil apoyado en Inteligencia de Negocios (BI).",
                 category: "core",
                 icon: "fa-brain",
                 badge: "Núcleo",
                 x: 50,
                 y: 50,
                 isRoot: true,
-                color: "from-sky-500 to-indigo-600",
+                color: "from-amber-500 to-yellow-600",
                 list: [
-                    "Fundamento de las organizaciones guiadas por datos (Data-Driven).",
-                    "Integra tecnología, metodologías y procesos analíticos.",
-                    "Optimiza el rendimiento y genera ventaja competitiva."
+                    "Integra Inteligencia de Negocios (BI) como motor analítico.",
+                    "Sigue una ruta lógica de la captura a la toma de decisiones.",
+                    "Optimiza procesos y detecta áreas de oportunidad."
                 ],
-                impact: "Permite reducir el margen de error operativo y responder ágilmente a cambios del mercado.",
-                connections: ["fuentes", "limpieza", "almacenamiento", "analitica", "comunicacion", "decisiones", "gobernanza", "ia_declaracion"]
+                impact: "Proporciona ventaja competitiva reduciendo la incertidumbre directiva.",
+                connections: [
+                    { target: "fuentes", label: "se compone de" },
+                    { target: "limpieza", label: "requiere de" },
+                    { target: "almacenamiento", label: "almacena en" },
+                    { target: "analitica", label: "se analiza con" },
+                    { target: "comunicacion", label: "se comunica mediante" },
+                    { target: "decisiones", label: "conduce a" },
+                    { target: "gobernanza", label: "considerando" },
+                    { target: "casos", label: "se aplica en" }
+                ]
             },
             {
                 id: "fuentes",
-                title: "1. Fuentes y Obtención",
-                subtitle: "Captura de datos estructurados y no estructurados de origen interno y externo.",
+                title: "1. Recolección de Datos",
+                subtitle: "Consiste en obtener datos de diferentes fuentes internas y externas.",
                 category: "captura",
                 icon: "fa-database",
                 badge: "Fase 1",
-                x: 22,
-                y: 25,
-                color: "from-sky-600 to-cyan-600",
+                x: 20,
+                y: 20,
+                color: "from-sky-500 to-blue-600",
                 list: [
-                    "<strong>Fuentes Internas:</strong> ERP (sistemas de gestión), CRM (clientes), transacciones relacionales.",
-                    "<strong>Fuentes Externas:</strong> Estudios de mercado, datos macreoeconómicos, redes sociales, APIs públicas.",
-                    "<strong>Captura:</strong> Procesos continuos y por lotes (Batch/Streaming)."
+                    "<strong>Fuentes Internas:</strong> Ventas, transacciones, registros CRM/ERP.",
+                    "<strong>Fuentes Externas:</strong> Encuestas, sensores IoT, redes sociales.",
+                    "<strong>Sistemas:</strong> Sistemas de información operativos."
                 ],
-                impact: "Asegura la materia prima necesaria para cualquier análisis analítico representativo.",
-                connections: ["root", "limpieza"]
+                impact: "Garantiza la disponibilidad inicial de datos relevantes.",
+                connections: [
+                    { target: "limpieza", label: "conduce a" }
+                ]
             },
             {
                 id: "limpieza",
-                title: "2. Limpieza y Calidad (ETL)",
-                subtitle: "Depuración, deduplicación y estructuración previa al análisis.",
+                title: "2. Limpieza y Depuración",
+                subtitle: "Detecta y corrige errores, eliminando datos duplicados e incorrectos.",
                 category: "procesamiento",
                 icon: "fa-filter",
                 badge: "Fase 2",
                 x: 50,
-                y: 22,
-                color: "from-indigo-600 to-blue-600",
+                y: 18,
+                color: "from-yellow-500 to-amber-600",
                 list: [
-                    "<strong>Calidad de Datos:</strong> Veracidad, precisión, completitud y consistencia.",
-                    "<strong>Detección de Anomalías:</strong> Identificación de duplicados y valores atípicos.",
-                    "<strong>Transformación ETL:</strong> Extracción, Transformación y Carga en repositorios."
+                    "<strong>Eliminación:</strong> Datos duplicados, incompletos o erróneos.",
+                    "<strong>Estandarización:</strong> Homogeneización de formatos de fecha y texto.",
+                    "<strong>Calidad ETL:</strong> Preparación para integración confiable."
                 ],
-                impact: "Evita el sesgo 'Garbage In, Garbage Out' garantizando confiabilidad en los modelos.",
-                connections: ["root", "fuentes", "almacenamiento"]
+                impact: "Evita análisis erróneos asegurando la veracidad de la información.",
+                connections: [
+                    { target: "almacenamiento", label: "permite el" }
+                ]
             },
             {
                 id: "almacenamiento",
                 title: "3. Almacenamiento e Integración",
-                subtitle: "Consolidación de repositorios de alta capacidad y escalabilidad.",
+                subtitle: "Guarda los datos de manera organizada y segura.",
                 category: "procesamiento",
                 icon: "fa-server",
                 badge: "Fase 3",
-                x: 78,
-                y: 25,
-                color: "from-indigo-600 to-purple-600",
+                x: 80,
+                y: 20,
+                color: "from-emerald-500 to-green-600",
                 list: [
-                    "<strong>Data Warehouses:</strong> Repositorios centrales estructurados optimizados para BI.",
-                    "<strong>Data Lakes & Cloud:</strong> Almacenamiento masivo de datos no estructurados.",
-                    "<strong>Integración:</strong> Unificación de silos de información departamentales."
+                    "<strong>Repositorios:</strong> Bases de datos, Data Warehouses y Servidores.",
+                    "<strong>Nube:</strong> Almacenamiento escalable en la nube.",
+                    "<strong>Integración:</strong> Consolidación de sistemas de información."
                 ],
-                impact: "Permite consultas complejas en segundos sobre volúmenes masivos históricos.",
-                connections: ["root", "limpieza", "analitica"]
+                impact: "Permite un acceso estructurado y seguro a históricos masivos.",
+                connections: [
+                    { target: "clasificacion", label: "facilita la" }
+                ]
+            },
+            {
+                id: "clasificacion",
+                title: "4. Clasificación y Organización",
+                subtitle: "Agrupa los datos de acuerdo con sus características.",
+                category: "procesamiento",
+                icon: "fa-folder-tree",
+                badge: "Fase 4",
+                x: 82,
+                y: 52,
+                color: "from-amber-600 to-orange-600",
+                list: [
+                    "<strong>Categorización:</strong> Agrupación por atributos clave.",
+                    "<strong>Optimizaciòn:</strong> Facilita su búsqueda, consulta y análisis posterior."
+                ],
+                impact: "Reduce tiempos de consulta y estructuración previa al análisis.",
+                connections: [
+                    { target: "analitica", label: "soporta el" }
+                ]
             },
             {
                 id: "analitica",
-                title: "4. Procesamiento y Analítica",
-                subtitle: "Aplicación de modelos matemáticos, estadísticos y Machine Learning.",
+                title: "5. Procesamiento y Análisis",
+                subtitle: "Transforma los datos en información significativa identificando patrones.",
                 category: "analitica",
                 icon: "fa-chart-pie",
-                badge: "Fase 4",
-                x: 82,
-                y: 62,
+                badge: "Fase 5",
+                x: 50,
+                y: 82,
                 color: "from-emerald-600 to-teal-600",
                 list: [
-                    "<strong>Analítica Descriptiva:</strong> Comprensión del rendimiento histórico (¿Qué pasó?).",
-                    "<strong>Analítica Predictiva:</strong> Modelos estadísticos y proyecciones (¿Qué pasará?).",
-                    "<strong>Analítica Prescriptiva:</strong> Algoritmos de recomendación (¿Qué debemos hacer?)."
+                    "<strong>Transformación:</strong> Modelado analítico y estadístico.",
+                    "<strong>Identificación:</strong> Tendencias, patrones y relaciones entre variables."
                 ],
-                impact: "Descubre patrones ocultos, oportunidades de negocio e ineficiencias operativas.",
-                connections: ["root", "almacenamiento", "comunicacion"]
+                impact: "Descubre conocimiento oculto de alto valor para la dirección.",
+                connections: [
+                    { target: "comunicacion", label: "se traslada a" }
+                ]
             },
             {
                 id: "comunicacion",
-                title: "5. Comunicación y Dashboards",
-                subtitle: "Visualización intuitiva e interactiva de métricas de rendimiento.",
+                title: "6. Interpretación y Presentación",
+                subtitle: "Muestra los resultados de manera comprensible mediante dashboards.",
                 category: "analitica",
                 icon: "fa-display",
-                badge: "Fase 5",
-                x: 62,
-                y: 82,
-                color: "from-teal-600 to-emerald-600",
+                badge: "Fase 6 & 7",
+                x: 18,
+                y: 52,
+                color: "from-sky-600 to-indigo-600",
                 list: [
-                    "<strong>Dashboards Interactivos:</strong> Tableros ejecutivos en tiempo real.",
-                    "<strong>Data Storytelling:</strong> Narrativa clara de datos para audiencias no técnicas.",
-                    "<strong>Indicadores Clave (KPIs):</strong> Monitoreo continuo de metas estratégicas."
+                    "<strong>Herramientas:</strong> Reportes, tablas, gráficas, indicadores y Dashboards.",
+                    "<strong>Comprensión:</strong> Permite conocer situaciones y necesidades organizacionales."
                 ],
-                impact: "Acelera la democratización de la información en todos los niveles directivos.",
-                connections: ["root", "analitica", "decisiones"]
+                impact: "Democratiza la información para la toma de decisiones clara.",
+                connections: [
+                    { target: "decisiones", label: "soporta la" }
+                ]
             },
             {
                 id: "decisiones",
-                title: "6. Decisión y Evaluación",
-                subtitle: "Ejecución estratégica basada en evidencia y mejora continua.",
+                title: "7. Toma de Decisiones",
+                subtitle: "Utiliza la información obtenida para tomar mejores decisiones ejecutivas.",
                 category: "analitica",
                 icon: "fa-bullseye",
-                badge: "Fase 6",
-                x: 38,
-                y: 82,
-                color: "from-amber-600 to-emerald-600",
+                badge: "Fase 8",
+                x: 48,
+                y: 52,
+                color: "from-emerald-500 to-green-700",
                 list: [
-                    "<strong>Cultura Data-Driven:</strong> Decisiones fundamentadas en evidencia, no intuición.",
-                    "<strong>Evaluación Continua:</strong> Medición del retorno de inversión (ROI) e impacto.",
-                    "<strong>Bucle de Retroalimentación:</strong> Refinamiento continuo de los modelos de BI."
+                    "<strong>Optimizaciones:</strong> Mejorar procesos y reducir costos.",
+                    "<strong>Resolución:</strong> Detectar oportunidades y solucionar problemas."
                 ],
-                impact: "Maximiza la precisión de los planes tácticos y la agilidad estratégica.",
-                connections: ["root", "comunicacion", "casos"]
+                impact: "Garantiza el crecimiento estratégico sostenible de la organización.",
+                connections: [
+                    { target: "casos", label: "ver" }
+                ]
             },
             {
                 id: "gobernanza",
-                title: "7. Gobernanza y Ética",
-                subtitle: "Marcos normativos, seguridad de la información y transparencia.",
+                title: "Calidad, Seguridad, Privacidad y Ética",
+                subtitle: "Marcos normativos transversales de protección y buen uso.",
                 category: "gobernanza",
                 icon: "fa-shield-halved",
                 badge: "Transversal",
                 x: 18,
-                y: 62,
-                color: "from-amber-600 to-orange-600",
+                y: 82,
+                color: "from-purple-600 to-indigo-700",
                 list: [
-                    "<strong>Seguridad de Datos:</strong> Cifrado, control de acceso y prevención de brechas.",
-                    "<strong>Privacidad y Normativa:</strong> Cumplimiento estricto (ej. GDPR, Leyes locales).",
-                    "<strong>Ética e IA:</strong> Mitigación de sesgos algorítmicos y procesamiento equitativo."
+                    "<strong>Calidad:</strong> Precisión de datos de entrada.",
+                    "<strong>Seguridad:</strong> Protección contra accesos no autorizados.",
+                    "<strong>Privacidad & Ética:</strong> Cumplimiento normativo y transparencia."
                 ],
-                impact: "Protege el activo reputacional de la empresa y garantiza la sostenibilidad legal.",
-                connections: ["root", "fuentes", "ia_declaracion"]
+                impact: "Asegura la protección legal y la reputación institucional.",
+                connections: [
+                    { target: "root", label: "mediante" }
+                ]
             },
             {
                 id: "casos",
-                title: "8. Casos Prácticos de Aplicación",
-                subtitle: "Casos de éxito reales en la industria moderna.",
+                title: "Ejemplos Aplicados",
+                subtitle: "Casos prácticos de éxito en la industria.",
                 category: "analitica",
                 icon: "fa-briefcase",
-                badge: "Aplicación",
+                badge: "Ejemplos",
                 x: 80,
-                y: 85,
-                color: "from-purple-600 to-pink-600",
+                y: 82,
+                color: "from-rose-600 to-pink-600",
                 list: [
-                    "<strong>Retención CRM:</strong> Predicción y reducción de abandono de clientes (Churn Rate).",
-                    "<strong>Mantenimiento Predictivo:</strong> Prevención de fallas operativas en cadena de suministro.",
-                    "<strong>Nuevos Mercados:</strong> Identificación de demandas no satisfechas."
+                    "<strong>Áreas de Oportunidad:</strong> Deserción escolar (regresión múltiple).",
+                    "<strong>Relación con Clientes:</strong> Análisis de comportamiento de compra (HelloFresh).",
+                    "<strong>Operaciones:</strong> Automatización logística de Coca-Cola."
                 ],
-                impact: "Demuestra el impacto cuantitativo directo en ingresos y eficiencias de costos.",
-                connections: ["decisiones", "analitica"]
-            },
-            {
-                id: "ia_declaracion",
-                title: "9. Declaración de IA & Referencias",
-                subtitle: "Transparencia tecnológica y fuentes bibliográficas (APA 7).",
-                category: "gobernanza",
-                icon: "fa-graduation-cap",
-                badge: "Soporte",
-                x: 20,
-                y: 85,
-                color: "from-slate-700 to-slate-800",
-                list: [
-                    "<strong>Uso de IA:</strong> Gemini 3 Flash para síntesis analítica y desarrollo interactivo.",
-                    "<strong>Supervisión Humana:</strong> Validación de coherencia técnica y precisión de fuentes.",
-                    "<strong>Referencias APA 7:</strong> Joyanes Aguilar (2014), Barón Ramírez et al. (2021), UOC (2018)."
-                ],
-                impact: "Asegura la responsabilidad profesional, rigurosidad académica y transparencia.",
-                connections: ["root", "gobernanza"]
+                impact: "Demuestra la aplicabilidad real del tratamiento de datos.",
+                connections: []
             }
         ];
 
-        // Canvas & Interaction Variables
         let activeNodeId = null;
         let scale = 1;
         let panX = 0;
@@ -445,38 +450,31 @@
         const container = document.getElementById('nodesContainer');
         const svgLayer = document.getElementById('svgLayer');
 
-        // Initialize App
         function init() {
             renderNodes();
             renderConnectors();
             window.addEventListener('resize', renderConnectors);
             setupPanZoom();
-            
-            // Auto select root node on load
             setTimeout(() => selectNode('root'), 300);
         }
 
-        // Render Nodes into Container
         function renderNodes() {
             container.innerHTML = '';
-            
             conceptData.forEach(node => {
                 const nodeEl = document.createElement('div');
                 nodeEl.id = `node-${node.id}`;
-                nodeEl.className = `concept-node absolute p-4 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-xl flex items-center gap-3 w-64 ${node.isRoot ? 'w-80 pulse-ring border-sky-500/50' : ''}`;
-                
-                // Position calculations (Percentage based)
+                nodeEl.className = `concept-node absolute p-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-xl flex items-center gap-3 w-60 ${node.isRoot ? 'w-72 pulse-ring border-amber-500/80' : ''}`;
                 nodeEl.style.left = `${node.x}%`;
                 nodeEl.style.top = `${node.y}%`;
                 nodeEl.style.transform = 'translate(-50%, -50%)';
 
                 nodeEl.innerHTML = `
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${node.color} flex items-center justify-center text-white shrink-0 shadow-md">
-                        <i class="fa-solid ${node.icon} text-base"></i>
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${node.color} flex items-center justify-center text-white shrink-0 shadow-md">
+                        <i class="fa-solid ${node.icon} text-sm"></i>
                     </div>
                     <div class="overflow-hidden flex-grow">
                         <div class="flex items-center justify-between gap-1 mb-0.5">
-                            <span class="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded bg-slate-800 text-sky-400 border border-slate-700">${node.badge}</span>
+                            <span class="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.2 rounded bg-slate-800 text-amber-400 border border-slate-700">${node.badge}</span>
                         </div>
                         <h4 class="font-heading font-bold text-xs text-white truncate">${node.title}</h4>
                         <p class="text-[10px] text-slate-400 truncate">${node.subtitle}</p>
@@ -492,57 +490,71 @@
             });
         }
 
-        // Render Connecting Curved SVG Lines
+        // Render Connecting SVG Lines WITH EXPLICIT LINK WORDS (Palabras de Enlace)
         function renderConnectors() {
-            svgLayer.innerHTML = `<defs>
-                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.4"/>
-                    <stop offset="100%" stop-color="#6366f1" stop-opacity="0.2"/>
-                </linearGradient>
-            </defs>`;
-
-            const drawnPairs = new Set();
+            svgLayer.innerHTML = '';
 
             conceptData.forEach(source => {
-                source.connections.forEach(targetId => {
-                    const target = conceptData.find(n => n.id === targetId);
+                source.connections.forEach(conn => {
+                    const target = conceptData.find(n => n.id === conn.target);
                     if (!target) return;
-
-                    const pairKey = [source.id, target.id].sort().join('-');
-                    if (drawnPairs.has(pairKey)) return;
-                    drawnPairs.add(pairKey);
 
                     const x1 = (source.x / 100) * viewport.clientWidth;
                     const y1 = (source.y / 100) * viewport.clientHeight;
                     const x2 = (target.x / 100) * viewport.clientWidth;
                     const y2 = (target.y / 100) * viewport.clientHeight;
 
-                    // Quadratic Bezier curve control points
-                    const cx = (x1 + x2) / 2;
-                    const cy = (y1 + y2) / 2 - 20;
+                    const midX = (x1 + x2) / 2;
+                    const midY = (y1 + y2) / 2;
 
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    path.setAttribute('d', `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+                    // Group Container for SVG elements
+                    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    g.setAttribute('data-source', source.id);
+                    g.setAttribute('data-target', target.id);
+
+                    // Line Path
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    path.setAttribute('x1', x1);
+                    path.setAttribute('y1', y1);
+                    path.setAttribute('x2', x2);
+                    path.setAttribute('y2', y2);
                     path.setAttribute('class', 'connector-line');
-                    path.setAttribute('stroke', 'url(#lineGrad)');
-                    path.setAttribute('stroke-width', '2');
-                    path.setAttribute('fill', 'none');
-                    path.setAttribute('data-pair', pairKey);
-                    path.setAttribute('data-source', source.id);
-                    path.setAttribute('data-target', target.id);
+                    path.setAttribute('stroke', '#475569');
+                    path.setAttribute('stroke-width', '1.5');
 
-                    svgLayer.appendChild(path);
+                    // Link Word Background Rect
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    const textWidth = conn.label.length * 6 + 12;
+                    rect.setAttribute('x', midX - textWidth / 2);
+                    rect.setAttribute('y', midY - 9);
+                    rect.setAttribute('width', textWidth);
+                    rect.setAttribute('height', 18);
+                    rect.setAttribute('rx', 4);
+                    rect.setAttribute('fill', '#0f172a');
+                    rect.setAttribute('stroke', '#334155');
+                    rect.setAttribute('stroke-width', '1');
+
+                    // Link Word Text Over Line
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', midX);
+                    text.setAttribute('y', midY + 3);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('class', 'link-text');
+                    text.textContent = conn.label;
+
+                    g.appendChild(path);
+                    g.appendChild(rect);
+                    g.appendChild(text);
+                    svgLayer.appendChild(g);
                 });
             });
         }
 
-        // Select Node & Update UI / Drawer
         function selectNode(id) {
             activeNodeId = id;
             const node = conceptData.find(n => n.id === id);
             if (!node) return;
 
-            // Highlight Node Style
             document.querySelectorAll('.concept-node').forEach(el => {
                 el.classList.remove('active-node', 'dimmed');
             });
@@ -550,27 +562,31 @@
             const activeEl = document.getElementById(`node-${id}`);
             if (activeEl) activeEl.classList.add('active-node');
 
-            // Dim unconnected nodes
+            const connectedIds = node.connections.map(c => c.target);
             document.querySelectorAll('.concept-node').forEach(el => {
                 const elId = el.id.replace('node-', '');
-                if (elId !== id && !node.connections.includes(elId)) {
+                if (elId !== id && !connectedIds.includes(elId)) {
                     el.classList.add('dimmed');
                 }
             });
 
-            // Highlight Lines
-            document.querySelectorAll('.connector-line').forEach(line => {
-                const src = line.getAttribute('data-source');
-                const tgt = line.getAttribute('data-target');
+            // Highlight Active Path Lines and Link Words
+            document.querySelectorAll('g[data-source]').forEach(g => {
+                const src = g.getAttribute('data-source');
+                const tgt = g.getAttribute('data-target');
+                const line = g.querySelector('.connector-line');
+                const text = g.querySelector('.link-text');
 
                 if (src === id || tgt === id) {
                     line.classList.add('active-path');
+                    text.classList.add('active-link-text');
                 } else {
                     line.classList.remove('active-path');
+                    text.classList.remove('active-link-text');
                 }
             });
 
-            // Populate Drawer Details
+            // Fill Drawer Details
             document.getElementById('drawerTitle').innerText = node.title;
             document.getElementById('drawerSubtitle').innerText = node.subtitle;
             document.getElementById('drawerBadge').innerText = node.badge;
@@ -578,95 +594,66 @@
             document.getElementById('drawerImpact').innerText = node.impact;
             document.getElementById('drawerNodeId').innerText = `ID: ${node.id}`;
 
-            // Populate List
             const listEl = document.getElementById('drawerList');
             listEl.innerHTML = '';
             node.list.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'flex items-start gap-2';
-                li.innerHTML = `<i class="fa-solid fa-circle-check text-sky-400 text-xs mt-0.5 shrink-0"></i><span>${item}</span>`;
+                li.innerHTML = `<i class="fa-solid fa-circle-check text-amber-400 text-xs mt-0.5 shrink-0"></i><span>${item}</span>`;
                 listEl.appendChild(li);
             });
 
-            // Related Buttons
             const relatedEl = document.getElementById('drawerRelated');
             relatedEl.innerHTML = '';
-            node.connections.forEach(relId => {
-                const relNode = conceptData.find(n => n.id === relId);
+            node.connections.forEach(conn => {
+                const relNode = conceptData.find(n => n.id === conn.target);
                 if (relNode) {
                     const btn = document.createElement('button');
-                    btn.className = 'px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-sky-600/30 border border-slate-700 hover:border-sky-500 text-xs text-slate-300 hover:text-sky-300 transition-all flex items-center gap-1.5';
-                    btn.innerHTML = `<i class="fa-solid ${relNode.icon} text-[10px]"></i><span>${relNode.title}</span>`;
-                    btn.onclick = () => selectNode(relId);
+                    btn.className = 'px-2 py-1 rounded-lg bg-slate-800 hover:bg-amber-600/30 border border-slate-700 text-xs text-slate-300 transition-all flex items-center gap-1.5';
+                    btn.innerHTML = `<span class="text-[9px] text-amber-400 font-bold">${conn.label} →</span> <span>${relNode.title}</span>`;
+                    btn.onclick = () => selectNode(conn.target);
                     relatedEl.appendChild(btn);
                 }
             });
 
-            // Open Drawer
             openDrawer();
         }
 
-        // Open & Close Drawer Functions
-        function openDrawer() {
-            document.getElementById('detailDrawer').classList.remove('translate-x-full');
-        }
-
+        function openDrawer() { document.getElementById('detailDrawer').classList.remove('translate-x-full'); }
         function closeDrawer() {
             document.getElementById('detailDrawer').classList.add('translate-x-full');
-            
-            // Reset active visual states
             document.querySelectorAll('.concept-node').forEach(el => el.classList.remove('active-node', 'dimmed'));
             document.querySelectorAll('.connector-line').forEach(line => line.classList.remove('active-path'));
+            document.querySelectorAll('.link-text').forEach(t => t.classList.remove('active-link-text'));
             activeNodeId = null;
         }
 
-        // Filter Categories
         function filterCategory(cat) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.getAttribute('data-cat') === cat) {
-                    btn.className = "filter-btn px-3 py-1 rounded-md text-xs font-medium bg-sky-600 text-white transition-all";
-                } else {
-                    btn.className = "filter-btn px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all";
-                }
+                btn.className = (btn.getAttribute('data-cat') === cat) 
+                    ? "filter-btn px-3 py-1 rounded-md text-xs font-medium bg-amber-600 text-white transition-all"
+                    : "filter-btn px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all";
             });
 
             document.querySelectorAll('.concept-node').forEach(el => {
                 const id = el.id.replace('node-', '');
                 const node = conceptData.find(n => n.id === id);
-                if (cat === 'all' || node.category === cat || node.isRoot) {
-                    el.style.display = 'flex';
-                } else {
-                    el.style.display = 'none';
-                }
+                el.style.display = (cat === 'all' || node.category === cat || node.isRoot) ? 'flex' : 'none';
             });
-
             renderConnectors();
         }
 
-        // Search Logic
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-            if (!query) {
-                document.querySelectorAll('.concept-node').forEach(el => el.classList.remove('dimmed'));
-                return;
-            }
-
             document.querySelectorAll('.concept-node').forEach(el => {
                 const id = el.id.replace('node-', '');
                 const node = conceptData.find(n => n.id === id);
-                const match = node.title.toLowerCase().includes(query) || 
-                              node.subtitle.toLowerCase().includes(query) || 
-                              node.list.some(i => i.toLowerCase().includes(query));
-                
-                if (match) {
-                    el.classList.remove('dimmed');
-                } else {
-                    el.classList.add('dimmed');
-                }
+                const match = node.title.toLowerCase().includes(query) || node.subtitle.toLowerCase().includes(query);
+                if (!query || match) el.classList.remove('dimmed');
+                else el.classList.add('dimmed');
             });
         });
 
-        // Pan & Zoom Setup
         function setupPanZoom() {
             viewport.addEventListener('mousedown', (e) => {
                 if (e.target.closest('.concept-node')) return;
@@ -674,22 +661,16 @@
                 startX = e.clientX - panX;
                 startY = e.clientY - panY;
             });
-
             window.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 panX = e.clientX - startX;
                 panY = e.clientY - startY;
                 applyTransform();
             });
-
-            window.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-
+            window.addEventListener('mouseup', () => { isDragging = false; });
             viewport.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-                scale = Math.min(Math.max(0.6, scale * zoomFactor), 2);
+                scale = Math.min(Math.max(0.6, scale * (e.deltaY < 0 ? 1.1 : 0.9)), 2);
                 applyTransform();
             }, { passive: false });
         }
@@ -699,34 +680,12 @@
             svgLayer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
         }
 
-        function zoomIn() {
-            scale = Math.min(2, scale * 1.2);
-            applyTransform();
-        }
+        function zoomIn() { scale = Math.min(2, scale * 1.2); applyTransform(); }
+        function zoomOut() { scale = Math.max(0.6, scale * 0.8); applyTransform(); }
+        function resetZoom() { scale = 1; panX = 0; panY = 0; applyTransform(); }
+        function resetView() { resetZoom(); closeDrawer(); filterCategory('all'); document.getElementById('searchInput').value = ''; }
 
-        function zoomOut() {
-            scale = Math.max(0.6, scale * 0.8);
-            applyTransform();
-        }
-
-        function resetZoom() {
-            scale = 1;
-            panX = 0;
-            panY = 0;
-            applyTransform();
-        }
-
-        function resetView() {
-            resetZoom();
-            closeDrawer();
-            filterCategory('all');
-            document.getElementById('searchInput').value = '';
-        }
-
-        // Run Initialization
         window.onload = init;
     </script>
 </body>
 </html>
-```eof
-
